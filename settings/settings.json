@@ -1,0 +1,47 @@
+{
+  "_comment_top": "VibeCoding contributor settings.json template — Animal Lovers App. Tune as needed; do NOT add API keys or other secrets here.",
+  "model": "claude-sonnet-4-6",
+  "permissions": {
+    "allow": [
+      "Bash(gh issue *)",
+      "Bash(gh pr *)",
+      "Bash(gh repo *)",
+      "Bash(git status*)",
+      "Bash(git log*)",
+      "Bash(git diff*)",
+      "Bash(git checkout*)",
+      "Bash(git branch*)",
+      "Bash(git pull*)",
+      "Bash(git push origin feature/*)",
+      "Bash(pnpm install*)",
+      "Bash(pnpm -r typecheck)",
+      "Bash(pnpm -r test*)",
+      "Bash(pnpm prepare-schema)",
+      "Bash(pnpm dev*)",
+      "Bash(pnpm build*)",
+      "Bash(npx prisma*)",
+      "Bash(ls*)",
+      "Bash(cat*)",
+      "Bash(head*)",
+      "Bash(tail*)",
+      "Bash(grep*)",
+      "Bash(find * -type f *)",
+      "Bash(rg*)"
+    ],
+    "deny": [
+      "Bash(git push origin main*)",
+      "Bash(git push --force*)",
+      "Bash(git reset --hard*)",
+      "Bash(vercel --prod*)",
+      "Bash(railway up*)",
+      "Bash(prisma migrate deploy*)"
+    ]
+  },
+  "env": {
+    "_comment": "Set CONTRIBUTOR_NAME to your handle for logging; never put credentials here.",
+    "CONTRIBUTOR_NAME": "contributor"
+  },
+  "hooks": {
+    "_comment": "Add hooks as you settle into the workflow. The lead has session-start hooks that auto-print sprint state; you may want similar."
+  }
+}
