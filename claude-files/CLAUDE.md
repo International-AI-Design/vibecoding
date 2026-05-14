@@ -3,7 +3,24 @@
 **Maintained by:** Johnny Fermin-Robbins / Ferro Consulting LLC
 **This file lives at:** `~/.claude/CLAUDE.md` on your Mac (installed by VibeCoding's `install.sh`)
 
-> This is a stripped-down version of the lead's CLAUDE.md, focused on what you need to ship contributions to the Animal Lovers App SaaS platform without context bloat. The deeper project state lives in the repo at `workspaces/platform/CLAUDE.md` and rotates with `HANDOFF-*.md` files; this file is your stable harness.
+> This is the stable harness — always-loaded base instructions, kept narrow on purpose to save tokens. The detailed playbooks live at `~/code/vibecoding/docs/` and are lazy-loaded only when you need them.
+
+## Priority order (in force, every session)
+
+1. **Quality first.** Every output verifiable by execution, not by inspection.
+2. **Token efficiency second.** Delegate to agents, search before reading, archive before context bloats.
+
+Where they conflict, quality wins.
+
+## Lazy-loaded reference docs (read on demand, NOT at session start)
+
+- **`~/code/vibecoding/docs/SESSION-PLAYBOOK.md`** — The 4-phase ritual: Start / Work / Compaction-Avoidance / Close-Out. Read this at the start of your FIRST session, then refer back at every close-out. Includes the 3-and-10 rule and the reasoning-failures check.
+- **`~/code/vibecoding/docs/LESSONS_LEARNED.md`** — Curated patterns from prior contributors. Search before solving a new class of problem.
+- **`~/code/vibecoding/docs/CROSS-FEEDBACK.md`** — How to feed friction back to the kit. File issues when something didn't work, worked unusually well, or was missing.
+- **`workspaces/platform/CLAUDE.md`** — Live technical-state snapshot of the platform. Read first ~80 lines at session start.
+- **The most recent `workspaces/platform/HANDOFF-*.md`** — Session-time live state. Read this second.
+
+**Don't pre-load these. Don't summarize them.** Read when the next task makes them relevant.
 
 ---
 
@@ -107,12 +124,46 @@ If your Claude Code session ever hits the auto-mode classifier saying "this need
 
 ---
 
+## Session ritual (summary; full version in SESSION-PLAYBOOK.md)
+
+**Start (3 min):**
+1. `date`, `git status`, `git log --oneline -5`, `git branch --show-current`
+2. Read `workspaces/platform/CLAUDE.md` (first 80 lines)
+3. Read the most recent `HANDOFF-*.md`
+4. Read the issue, write the user story + AC BEFORE writing code
+
+**Work:**
+- TypeScript types changed → `pnpm -r typecheck` immediately
+- Prisma schema changed → `pnpm prepare-schema` (edit the canonical, never the generated)
+- New React component → render at 1440 AND 375 before claiming done
+- About to read a 3rd related file → STOP, use `grep` or spawn an `Explore` agent
+
+**Compaction avoidance (the 3-and-10 rule):**
+End the session early if you've hit ANY of:
+- 3+ distinct topics in one session
+- 10+ different files touched
+- 2+ hours of active work
+- Multiple corrections from Johnny in one session
+Close out cleanly + start a fresh session. Quality drops invisibly when context fills.
+
+**Close-out (every session, mandatory — even short ones):**
+1. Summarize: what changed, what's open
+2. Commit any uncommitted work
+3. Update the issue / PR description with AC verification
+4. Reasoning-failures check: any assertion-without-verification or pattern-matched-without-checking? Log to `~/.claude/projects/<scope>/memory/feedback_reasoning_discipline.md`.
+5. Cross-feedback: if you hit kit friction, file an issue → `bash ~/code/vibecoding/scripts/file-feedback.sh`
+6. `/clear` or close the terminal
+
+Full version: `~/code/vibecoding/docs/SESSION-PLAYBOOK.md`.
+
 ## When in doubt
 
 - Read `workspaces/platform/CLAUDE.md` first.
 - Read the most recent `workspaces/platform/HANDOFF-*.md` (`ls -t HANDOFF-*.md | head -1`).
 - Search the repo via `gh search` / `git log` / `grep` — these are authoritative for code state.
 - Then ask in the PR or via SMS.
+
+If you hit something that should be in the kit but isn't → file a `feedback:gap` issue on `International-AI-Design/vibecoding`. The kit gets better when you tell it where it's broken.
 
 ---
 

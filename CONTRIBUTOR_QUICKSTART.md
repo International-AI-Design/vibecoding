@@ -3,6 +3,11 @@
 **Audience:** New IAID contributor working on the Animal Lovers App SaaS platform
 
 > This is the post-install orientation. If you haven't run `install.sh` yet, see the [README](README.md).
+>
+> **Companion docs in `docs/`:**
+> - [`SESSION-PLAYBOOK.md`](docs/SESSION-PLAYBOOK.md) — the exact ritual for running a session (read at first session start)
+> - [`LESSONS_LEARNED.md`](docs/LESSONS_LEARNED.md) — curated patterns from prior contributors
+> - [`CROSS-FEEDBACK.md`](docs/CROSS-FEEDBACK.md) — how to feed friction back to the kit
 
 ---
 
@@ -215,12 +220,27 @@ This produces a prompt that includes the user story, AC, and acceptance gate —
 ## What to do first
 
 After install:
-1. Ask Johnny to add you as a collaborator on `International-AI-Design/ferroai`.
-2. Clone it: `gh repo clone International-AI-Design/ferroai ~/code/ferroai`
-3. `cd ~/code/ferroai/workspaces/platform && claude`
-4. Read the platform CLAUDE.md + most recent HANDOFF.
-5. Pick an `area:customer-app`, `area:tests`, or `good-first-issue` from the GitHub issue list.
-6. Branch, work, open a PR. Tag Johnny for review.
+1. **Read [`docs/SESSION-PLAYBOOK.md`](docs/SESSION-PLAYBOOK.md)** — the 4-phase session ritual. This is the single highest-leverage document in the kit. Read it once now; refer back at every close-out.
+2. **Skim [`docs/LESSONS_LEARNED.md`](docs/LESSONS_LEARNED.md)** — the 8 curated patterns will save you hours.
+3. Ask Johnny to add you as a collaborator on `International-AI-Design/ferroai`.
+4. Clone it: `gh repo clone International-AI-Design/ferroai ~/code/ferroai`
+5. `cd ~/code/ferroai/workspaces/platform && claude`
+6. Run Phase 1 of the SESSION-PLAYBOOK explicitly: read platform `CLAUDE.md` + most recent `HANDOFF-*.md`, pick an issue, write the user story + AC before code.
+7. Branch, work, open a PR. Tag Johnny for review.
+8. **At session end:** run Phase 4 close-out. Do not skip even on short sessions.
+
+## When the kit lets you down
+
+If during a session you notice:
+- A protocol that didn't work → file `feedback:correction`
+- A pattern that worked unusually well → file `feedback:win`
+- Context you needed that wasn't there → file `feedback:gap`
+
+```bash
+bash ~/code/vibecoding/scripts/file-feedback.sh
+```
+
+The full protocol is in [`docs/CROSS-FEEDBACK.md`](docs/CROSS-FEEDBACK.md). Johnny curates weekly; your friction becomes the next contributor's smoother path.
 
 ---
 

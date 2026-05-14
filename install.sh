@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# VibeCoding — IAID contributor kit installer
+# VibeCoding v0.2 — IAID contributor kit installer
 # Idempotent. Safe to re-run. Only touches ~/.claude/.
 #
 # What it does:
@@ -115,12 +115,15 @@ fi
 echo ""
 say "Install complete."
 echo ""
-echo "Next steps:"
-echo "  1. Read $KIT_DIR/CONTRIBUTOR_QUICKSTART.md"
-echo "  2. Ask Johnny (@Fermin-Robbins) to add you as a collaborator on"
+echo "Next steps (in order, do not skip):"
+echo "  1. Read $KIT_DIR/docs/SESSION-PLAYBOOK.md  ← THE RITUAL"
+echo "  2. Skim $KIT_DIR/docs/LESSONS_LEARNED.md   ← 8 curated patterns"
+echo "  3. Skim $KIT_DIR/docs/CROSS-FEEDBACK.md    ← how to feed back"
+echo "  4. Read $KIT_DIR/CONTRIBUTOR_QUICKSTART.md ← project overview"
+echo "  5. Ask Johnny (@Fermin-Robbins) to add you as a collaborator on"
 echo "     International-AI-Design/ferroai (the actual platform repo)"
-echo "  3. Once added, clone it:"
-echo "       gh repo clone International-AI-Design/ferroai ~/code/ferroai"
-echo "  4. cd ~/code/ferroai/workspaces/platform && claude"
+echo "  6. Once added:"
+echo "       gh repo clone International-AI-Design/ferroai"
+echo "       cd ferroai/workspaces/platform && claude"
 echo ""
-say "Welcome to VibeCoding 🐾"
+say "Welcome to VibeCoding v0.2 🐾"
