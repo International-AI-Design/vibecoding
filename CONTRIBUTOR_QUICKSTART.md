@@ -19,44 +19,42 @@ A multi-tenant SaaS platform for pet-services SMBs (dog daycare, grooming, board
 
 **Status:** HTHD is deployed in pre-launch. The customer rows in the dev DB are Gingr-migrated test fixtures, NOT real users transacting. Treat HTHD as "deployed in pre-launch" — safe to test against live URLs.
 
-For the current state, always read the most recent `workspaces/platform/HANDOFF-*.md` in the platform repo. It rotates per-session.
+For your task scope, read the **GitHub issue** Johnny assigned for your sprint — it carries the user stories + acceptance criteria.
 
 ---
 
 ## Repo layout (the platform repo, not this kit)
 
+The contributor repo **is** the platform — `apps/`, `packages/`, `verticals/` are at the top level (no nested wrapper directory; clone and you're in it).
+
 ```
-ferroai/                                  ← repo root (International-AI-Design/ferroai)
-├── workspaces/
-│   └── platform/                         ← THE platform monorepo (your workspace)
-│       ├── apps/
-│       │   ├── customer-app/             ← Vite + React, customer-facing
-│       │   ├── admin-app/                ← Vite + React, tenant-staff-facing
-│       │   └── server/                   ← Node + Express + Prisma, single API
-│       ├── packages/                     ← Shared libraries (@ferro/*)
-│       ├── clients/                      ← Per-tenant config + branding
-│       ├── verticals/
-│       │   └── pet-services/
-│       │       └── prisma/schema.prisma  ← CANONICAL Prisma schema. Edit here.
-│       ├── e2e/                          ← Playwright end-to-end tests
-│       ├── scripts/                      ← Build + deploy scripts
-│       ├── CLAUDE.md                     ← Load-bearing technical state — READ FIRST
-│       ├── VERCEL_DEPLOY.md              ← Authoritative deploy runbook
-│       └── HANDOFF-*.md                  ← Time-stamped state snapshots, rotating
-└── outputs/                              ← Business deliverables
+animal-lovers-platform/                   ← repo root
+├── apps/
+│   ├── customer-app/                     ← Vite + React, customer-facing
+│   ├── admin-app/                        ← Vite + React, tenant-staff-facing
+│   └── server/                           ← Node + Express + Prisma, single API
+├── packages/                             ← Shared libraries (@ferro/*)
+├── clients/                              ← Per-tenant config + branding
+├── verticals/
+│   └── pet-services/
+│       └── prisma/schema.prisma          ← CANONICAL Prisma schema. Edit here.
+├── e2e/                                  ← Playwright end-to-end tests
+├── scripts/                              ← Build scripts
+└── CLAUDE.md                             ← Contributor harness — READ FIRST
 ```
 
-Other dirs you may see (`production/`, `internal/`, `archive/`) are **not your concern** unless Johnny points you there.
+This is the contributor-scoped repo: application code only. The lead's internal
+HANDOFF/strategy docs, deploy runbooks, and any business/legal/financial material
+are intentionally **not** here. Need context beyond the code + your sprint issue?
+Ask Johnny — don't go hunting for it.
 
 ---
 
-## The five must-read files (in order)
+## Must-read, in order
 
-1. `workspaces/platform/CLAUDE.md` — load-bearing technical-state snapshot. Updated whenever a load-bearing fact changes.
-2. The most recent `workspaces/platform/HANDOFF-*.md` — session-time live state (find by `ls -t HANDOFF-*.md | head -1`).
-3. Any `workspaces/platform/docs/<session>/USER-STORIES-*.md` for the current sprint's stories with ACs.
-4. The matching `workspaces/platform/docs/<session>/SPRINT-PLAN-*.md` for daily milestones.
-5. `workspaces/platform/VERCEL_DEPLOY.md` — what to do (and not do) for deploys.
+1. `CLAUDE.md` (repo root) — your contributor harness + platform discipline. READ FIRST.
+2. Your **sprint GitHub issue** — Johnny assigns it; it carries the user stories + acceptance criteria. This is your scope.
+3. The code itself — `apps/`, `packages/`, `verticals/pet-services/prisma/schema.prisma`. Authoritative for current behaviour (`git log` / `grep`).
 
 ---
 
@@ -64,11 +62,13 @@ Other dirs you may see (`production/`, `internal/`, `archive/`) are **not your c
 
 ```bash
 # 1. Pull latest
-cd workspaces/platform && git checkout main && git pull
+git checkout main && git pull
 
 # 2. See today's sprint board
 # The SessionStart hook in Claude Code auto-prints this
-gh issue list --label "status:ready" --label "area:customer-app" --no-assignee
+gh issue list -R International-AI-Design/animal-lovers-platform --label "status:ready" --no-assignee
+# Your very first PR: start with a good-first-issue
+gh issue list -R International-AI-Design/animal-lovers-platform --label "good first issue"
 
 # 3. Pick an issue
 gh issue view <N>
@@ -119,7 +119,7 @@ For these files: open a GitHub issue labeled `coordination`, describe the change
 
 ## Things you should NOT do
 
-Per `workspaces/platform/CLAUDE.md` and the team's hard-learned discipline:
+Per `CLAUDE.md` and the team's hard-learned discipline:
 
 - ❌ Touch `production/happy-tail/` in the platform repo. That's the legacy single-tenant deploy. The new platform's tenant config lives at `clients/<slug>/`.
 - ❌ Re-introduce per-app `pnpm-lock.yaml` files. The workspace-root lock is the only authoritative one.
@@ -197,11 +197,11 @@ cd apps/server && pnpm db:seed
 
 ## Triggering Claude correctly
 
-Claude Code on your Mac will load `~/.claude/CLAUDE.md` (from this kit) + `workspaces/platform/CLAUDE.md` + the recent HANDOFF docs on session start. That gives it project context.
+Claude Code on your Mac will load `~/.claude/CLAUDE.md` (from this kit) + the repo-root `CLAUDE.md` on session start. Your task scope comes from the sprint GitHub issue Johnny assigns. That gives it project context.
 
 For specific issues, the platform repo has a paste-ready prompt generator (when present):
 ```bash
-bash workspaces/platform/scripts/sprint-5day/start-on-issue.sh <N>
+bash scripts/sprint-5day/start-on-issue.sh <N>
 ```
 
 This produces a prompt that includes the user story, AC, and acceptance gate — feed it to Claude, then iterate.
@@ -222,10 +222,10 @@ This produces a prompt that includes the user story, AC, and acceptance gate —
 After install:
 1. **Read [`docs/SESSION-PLAYBOOK.md`](docs/SESSION-PLAYBOOK.md)** — the 4-phase session ritual. This is the single highest-leverage document in the kit. Read it once now; refer back at every close-out.
 2. **Skim [`docs/LESSONS_LEARNED.md`](docs/LESSONS_LEARNED.md)** — the 8 curated patterns will save you hours.
-3. Ask Johnny to add you as a collaborator on `International-AI-Design/ferroai`.
-4. Clone it: `gh repo clone International-AI-Design/ferroai ~/code/ferroai`
-5. `cd ~/code/ferroai/workspaces/platform && claude`
-6. Run Phase 1 of the SESSION-PLAYBOOK explicitly: read platform `CLAUDE.md` + most recent `HANDOFF-*.md`, pick an issue, write the user story + AC before code.
+3. Ask Johnny to add you as a collaborator on `International-AI-Design/animal-lovers-platform`.
+4. Clone it: `gh repo clone International-AI-Design/animal-lovers-platform ~/code/animal-lovers-platform`
+5. `cd ~/code/animal-lovers-platform && claude`
+6. Run Phase 1 of the SESSION-PLAYBOOK explicitly: read the repo-root `CLAUDE.md`, then your assigned sprint issue (or `--label "good first issue"` for your first PR), confirm the user story + AC before code.
 7. Branch, work, open a PR. Tag Johnny for review.
 8. **At session end:** run Phase 4 close-out. Do not skip even on short sessions.
 

@@ -1,0 +1,22 @@
+name: no-confidential-refs
+
+# Guards the public contributor kit against pointing new contributors at the
+# private business monorepo (International-AI-Design/ferroai) or its old
+# nested layout. Static check only — consumes no event inputs, no injection
+# surface. See scripts/check-no-confidential-refs.sh.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  guard:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check for confidential-boundary references
+        run: bash scripts/check-no-confidential-refs.sh
