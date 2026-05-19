@@ -17,8 +17,8 @@ Where they conflict, quality wins.
 - **`~/code/vibecoding/docs/SESSION-PLAYBOOK.md`** — The 4-phase ritual: Start / Work / Compaction-Avoidance / Close-Out. Read this at the start of your FIRST session, then refer back at every close-out. Includes the 3-and-10 rule and the reasoning-failures check.
 - **`~/code/vibecoding/docs/LESSONS_LEARNED.md`** — Curated patterns from prior contributors. Search before solving a new class of problem.
 - **`~/code/vibecoding/docs/CROSS-FEEDBACK.md`** — How to feed friction back to the kit. File issues when something didn't work, worked unusually well, or was missing.
-- **`workspaces/platform/CLAUDE.md`** — Live technical-state snapshot of the platform. Read first ~80 lines at session start.
-- **The most recent `workspaces/platform/HANDOFF-*.md`** — Session-time live state. Read this second.
+- **`CLAUDE.md`** (repo root) — your stable contributor harness + platform discipline. Read at session start.
+- **Your sprint GitHub issue** (Johnny assigns it) — the user stories + acceptance criteria for your task. This is your scope; read it second.
 
 **Don't pre-load these. Don't summarize them.** Read when the next task makes them relevant.
 
@@ -36,7 +36,7 @@ Treat Claude in your session as a pair-programmer with full repo context but no 
 
 Multi-tenant SaaS platform for pet-services SMBs at `animalloversapp.com`. One Node/Express server, two React/Vite frontends (customer-app, admin-app), shared Prisma/Postgres on Neon, Stripe Connect for payments. Tenant #1 is **Happy Tail Happy Dog (HTHD)** — Denver-area dog daycare. We're replacing their legacy Gingr SaaS in a calibrated couple-months parallel-run. The platform supports any future pet-services tenant.
 
-For the load-bearing technical-state snapshot, read `workspaces/platform/CLAUDE.md` in the repo. For session-time state, read the most recent `workspaces/platform/HANDOFF-*.md`.
+For the load-bearing technical-state snapshot, read `CLAUDE.md` at the repo root. For your task's scope (user stories + acceptance criteria), read the GitHub issue Johnny assigned for your sprint. The contributor repo does not carry the lead's internal HANDOFF/strategy docs by design.
 
 ---
 
@@ -85,7 +85,7 @@ Trigger to apply: any task that produces an artifact a human or downstream agent
 
 ## Things to NOT do
 
-Per platform discipline (see `workspaces/platform/CLAUDE.md` for full list):
+Per platform discipline (see `CLAUDE.md` for full list):
 
 - ❌ Touch `production/happy-tail/` — that's the legacy single-tenant deploy.
 - ❌ Use `vercel --prod` directly — use the workspace-root `pnpm deploy:*:prod` scripts.
@@ -128,9 +128,9 @@ If your Claude Code session ever hits the auto-mode classifier saying "this need
 
 **Start (3 min):**
 1. `date`, `git status`, `git log --oneline -5`, `git branch --show-current`
-2. Read `workspaces/platform/CLAUDE.md` (first 80 lines)
-3. Read the most recent `HANDOFF-*.md`
-4. Read the issue, write the user story + AC BEFORE writing code
+2. Read `CLAUDE.md` (repo root, first 80 lines)
+3. Read your assigned sprint GitHub issue (it has the user stories + ACs)
+4. Write/confirm the user story + AC BEFORE writing code
 
 **Work:**
 - TypeScript types changed → `pnpm -r typecheck` immediately
@@ -158,8 +158,7 @@ Full version: `~/code/vibecoding/docs/SESSION-PLAYBOOK.md`.
 
 ## When in doubt
 
-- Read `workspaces/platform/CLAUDE.md` first.
-- Read the most recent `workspaces/platform/HANDOFF-*.md` (`ls -t HANDOFF-*.md | head -1`).
+- Read `CLAUDE.md` (repo root) first, then your sprint GitHub issue.
 - Search the repo via `gh search` / `git log` / `grep` — these are authoritative for code state.
 - Then ask in the PR or via SMS.
 

@@ -28,7 +28,7 @@ If you're new here, start with the bootstrap prompt below.
    │     docs/CROSS-FEEDBACK.md     (when you want to file)        │
    │     scripts/file-feedback.sh   (one-command feedback)         │
    │                                                               │
-   │   ~/code/ferroai/   ◄── private; the platform you work on    │
+   │   ~/code/animal-lovers-platform/  ◄── the platform (private)  │
    │                                                               │
    └────────────────────────────┬──────────────────────────────────┘
                                 │  feedback issues
@@ -86,19 +86,20 @@ If anything fails, explain why and ask me what to do.
 
 8. Ask me my GitHub handle so I can request access to the private platform
    repo. If I don't have access yet, tell me to message Johnny
-   (@Fermin-Robbins) for an invite on International-AI-Design/ferroai.
+   (@Fermin-Robbins) for an invite on International-AI-Design/animal-lovers-platform.
 
 9. Once I have access:
-       gh repo clone International-AI-Design/ferroai
-       cd ~/code/ferroai/workspaces/platform
+       gh repo clone International-AI-Design/animal-lovers-platform
+       cd ~/code/animal-lovers-platform
        claude
 
 10. In the new Claude Code session, walk me through Phase 1 of the
     SESSION-PLAYBOOK explicitly:
-    - read workspaces/platform/CLAUDE.md (first 80 lines is enough)
-    - read the most recent HANDOFF-*.md
-    - run `gh issue list --label status:ready --no-assignee` and help me
-      pick a `good-first-issue` / `area:customer-app` / `area:tests` issue
+    - read CLAUDE.md at the repo root (first 80 lines is enough)
+    - for your FIRST PR, run:
+      `gh issue list -R International-AI-Design/animal-lovers-platform --label "good first issue"`
+      and start there. After that, Johnny assigns sprint issues to you
+      (each carries its user stories + acceptance criteria).
 
 11. Help me write the user story + acceptance criteria for the issue
     BEFORE I write any code. Confirm with me before starting implementation.
@@ -159,9 +160,9 @@ Then read `CONTRIBUTOR_QUICKSTART.md` for the 10-minute orientation.
 
 ## What you do next (after install)
 
-1. Ask Johnny (@Fermin-Robbins) to add you as a collaborator on `International-AI-Design/ferroai`. That's where the actual platform code lives.
-2. `gh repo clone International-AI-Design/ferroai ~/code/ferroai`
-3. `cd ~/code/ferroai/workspaces/platform && claude`
+1. Ask Johnny (@Fermin-Robbins) to add you as a collaborator on `International-AI-Design/animal-lovers-platform`. That's where the actual platform code lives.
+2. `gh repo clone International-AI-Design/animal-lovers-platform ~/code/animal-lovers-platform`
+3. `cd ~/code/animal-lovers-platform && claude`
 4. The SessionStart hook prints today's sprint board.
 5. Pick an open issue, branch, work, open a PR.
 

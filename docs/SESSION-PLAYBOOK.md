@@ -43,13 +43,13 @@ git checkout -b feature/<short-desc>-<issue-N>
 ### Step 1.2 — Load the canonical state
 Read these in order. **Stop as soon as you have enough to act.** Don't pre-load files for "completeness."
 
-1. `workspaces/platform/CLAUDE.md` — load-bearing technical-state snapshot. The first ~80 lines tell you 90% of what changed.
-2. The most recent `HANDOFF-*.md`:
+1. `CLAUDE.md` (repo root) — your contributor harness + platform discipline. The first ~80 lines tell you 90% of what you need.
+2. Your **sprint GitHub issue** (Johnny assigns it) — it carries the user stories + acceptance criteria. This is your task scope:
    ```bash
-   ls -t workspaces/platform/HANDOFF-*.md | head -1
+   gh issue list -R International-AI-Design/animal-lovers-platform --assignee @me
+   # first PR? → gh issue list -R International-AI-Design/animal-lovers-platform --label "good first issue"
    ```
-   That file = the previous session's hand-off. Read it.
-3. If today's task is in a specific `docs/<session>/` directory, read the user-stories + sprint-plan there. Skip the rest of that folder unless you need it.
+3. The code referenced by your issue (`apps/`, `packages/`, `verticals/…`). `git log`/`grep` are authoritative for current behaviour.
 
 ### Step 1.3 — Read your issue, then write down your AC
 ```bash
@@ -95,7 +95,7 @@ Wrong shape misses bugs. The user-rooted version forces you to verify behavior, 
 
 - **Delegate broad searches to a sub-agent.** Don't grep-and-read a dozen files in your main context. Spawn an `Explore` agent: "Find every callsite of `paymentMethodPreference` and summarize the pattern in <300 words." That keeps your main context clean.
 - **Read files in targeted slices.** When you only need the function signature, `Read` with offset+limit. Avoid full-file reads for files >300 lines.
-- **Skip already-loaded context.** If `workspaces/platform/CLAUDE.md` is in your session, don't re-read it. The file map and discipline rules are already in working memory.
+- **Skip already-loaded context.** If `CLAUDE.md` is in your session, don't re-read it. The file map and discipline rules are already in working memory.
 
 ### When to stop and check in
 
@@ -209,7 +209,7 @@ Distilled from the lead's working style. Apply in order.
 1. **Search before reading.** `grep -rn "pattern" src/` is ~50 tokens. Reading the file is ~5,000. Search first.
 2. **Read in slices, not files.** The `Read` tool takes `offset` and `limit`. Use them.
 3. **Delegate broad investigation to agents.** An `Explore` agent returns a summary; you don't pay for the raw read.
-4. **Don't re-load context.** If `workspaces/platform/CLAUDE.md` is already in your session, don't re-read it — refer to it.
+4. **Don't re-load context.** If `CLAUDE.md` is already in your session, don't re-read it — refer to it.
 5. **Archive on the way out.** When a task is done, explicitly say so. Claude releases working memory for completed work.
 6. **Prefer focused over comprehensive.** "Find every place we handle payment" is bad. "Find where we tokenize a card-on-file" is good.
 7. **Don't pre-explore.** Read what you need for the next 10 minutes, not for the rest of the session.
@@ -259,8 +259,7 @@ These are mistakes the kit has seen repeatedly. They're not in the codebase to s
 
 ## When in doubt
 
-- Read `workspaces/platform/CLAUDE.md`
-- Read the most recent `HANDOFF-*.md`
+- Read `CLAUDE.md` (repo root), then your sprint GitHub issue
 - Search the repo: `gh search` / `git log --grep` / `grep`
 - Ask in the PR or via SMS
 
