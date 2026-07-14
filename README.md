@@ -4,9 +4,9 @@
 
 > Most people using Claude Code are getting a fraction of what it can do — not because they're prompting badly, but because they're missing the machinery around the prompt.
 >
-> This is that machinery. It's the method [Johnny Fermin-Robbins](https://github.com/Fermin-Robbins) uses to ship production software as a solo operator, extracted into something you can install in five minutes and apply to your own work.
+> This is that machinery. It's the system [Johnny Fermin-Robbins](https://github.com/Fermin-Robbins) uses to ship production software as a solo operator, packaged so you can install it in five minutes and use it on your own work.
 
-**It is project-agnostic.** Nothing here assumes you're working on any particular codebase, in any particular language.
+**This is the design system itself — not a project built with it.** Nothing here assumes any particular codebase, language, framework, or domain. It's how the work gets done, not what the work is.
 
 ---
 
@@ -142,14 +142,6 @@ Or [open an issue](https://github.com/International-AI-Design/vibecoding/issues/
 
 ---
 
-## Tracks (opt-in)
-
-Project-specific onboarding, for people working with Johnny directly. **Ignore these unless one is yours.**
-
-- [`tracks/animal-lovers-app.md`](tracks/animal-lovers-app.md) — contributing to the Animal Lovers App platform
-
----
-
 ## Credit
 
 The method is a synthesis, and the primary sources are better than any summary:
@@ -162,6 +154,6 @@ Everything else is scar tissue from shipping.
 
 ---
 
-**Status:** v0.3 — reframed from an ALA-contributor kit into a project-agnostic method kit. Non-destructive installer.
+**Status:** v0.3 — the design system, standalone. Project onboarding lives with the projects, where it belongs. Non-destructive installer.
 **License:** not yet open-source licensed. Published for the people Johnny works with directly. Want to fork it? Just ask.
 **Maintainer:** Johnny Fermin-Robbins ([@Fermin-Robbins](https://github.com/Fermin-Robbins)) / IAID — Ferro Consulting LLC.

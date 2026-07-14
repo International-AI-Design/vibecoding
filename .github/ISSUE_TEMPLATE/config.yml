@@ -1,8 +1,8 @@
 blank_issues_enabled: false
 contact_links:
-  - name: Platform code bug (not the kit)
-    url: https://github.com/International-AI-Design/animal-lovers-platform/issues/new
-    about: "Bugs in the Animal Lovers App platform itself — file there, not here."
+  - name: Read The Method first
+    url: https://github.com/International-AI-Design/vibecoding/blob/main/docs/THE-METHOD.md
+    about: "Spec, verifier, environment. Most friction turns out to be a missing layer."
   - name: Cross-feedback protocol
     url: https://github.com/International-AI-Design/vibecoding/blob/main/docs/CROSS-FEEDBACK.md
-    about: "When to file what — read this first if you're not sure which template to pick."
+    about: "When to file what — read this if you're not sure which template to pick."

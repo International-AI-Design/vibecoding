@@ -36,9 +36,9 @@ So that [a real benefit lands].
 ### Good
 
 ```
-As a pet-services operator browsing the site on my phone,
+As a small-business owner browsing the site on my phone,
 I want to tap "Book a demo" and reach a working contact path,
-So that I can actually start a conversation about migrating.
+So that I can actually start a conversation about switching.
 ```
 
 ```

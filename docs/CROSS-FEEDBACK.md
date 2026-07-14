@@ -77,12 +77,11 @@ A great issue can be turned into a PR by Johnny (or you) in under 10 minutes.
 ## What's NOT cross-feedback
 
 Don't use this protocol for:
-- ❌ Platform code bugs — those go in `International-AI-Design/animal-lovers-platform` issues
-- ❌ Customer-facing bug reports — those go to Johnny on a 1:1 channel
-- ❌ Secrets, credentials, customer PII — never in any public issue
-- ❌ Personal complaints about the codebase — use a PR, not an issue
+- ❌ Bugs in a project you're *using the method on* — those belong in that project's tracker
+- ❌ Secrets, credentials, or anyone's private data — never in any public issue
+- ❌ General Claude Code bugs — those go to Anthropic
 
-The vibecoding repo is for **the harness**, not the platform.
+This repo is for **the method**. If the friction is with your codebase rather than with the way you're working, it's not cross-feedback.
 
 ---
 
@@ -130,7 +129,7 @@ The kit gets sharper with every contributor who files. The cost of filing is ~5 
 ## Privacy + safety
 
 - Issues are public by default (this repo is public). **Never put credentials, customer names, or PII in a feedback issue.**
-- Use placeholder names: `<tenant>`, `<customer>`, `<staff-member>`.
+- Use placeholder names: `<client>`, `<user>`, `<service>`.
 - If you need to share something sensitive, file the issue with a redacted version and DM Johnny the details.
 - If you accidentally put something sensitive in an issue, edit it immediately and tell Johnny — he can purge the history.
 
