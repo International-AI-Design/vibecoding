@@ -1,13 +1,18 @@
-# Animal Lovers App — Contributor Quickstart
-**Time to read:** ~10 minutes
-**Audience:** New IAID contributor working on the Animal Lovers App SaaS platform
+# Track — Animal Lovers App
 
-> This is the post-install orientation. If you haven't run `install.sh` yet, see the [README](README.md).
+> ### ⚠️ This is an OPT-IN track. Most people don't need it.
 >
-> **Companion docs in `docs/`:**
-> - [`SESSION-PLAYBOOK.md`](docs/SESSION-PLAYBOOK.md) — the exact ritual for running a session (read at first session start)
-> - [`LESSONS_LEARNED.md`](docs/LESSONS_LEARNED.md) — curated patterns from prior contributors
-> - [`CROSS-FEEDBACK.md`](docs/CROSS-FEEDBACK.md) — how to feed friction back to the kit
+> The AI Design System (this repo's main content) is **project-agnostic** — it's a method you apply to your own work. See the [README](../README.md) and [`docs/THE-METHOD.md`](../docs/THE-METHOD.md).
+>
+> **This file is only for you if you are contributing code to the Animal Lovers App platform**, by arrangement with Johnny. If that's not you, close this and go read the method.
+
+**Time to read:** ~10 minutes
+**Audience:** Contributors on the Animal Lovers App SaaS platform
+**Prerequisite:** you've run `install.sh` and read [`docs/SESSION-PLAYBOOK.md`](../docs/SESSION-PLAYBOOK.md)
+
+> **Repo access:** you'll work in **`International-AI-Design/animal-lovers-platform`** — the contributor-scoped, code-only mirror. Ask Johnny for an invite.
+>
+> Companion docs: [`SESSION-PLAYBOOK.md`](../docs/SESSION-PLAYBOOK.md) · [`LESSONS_LEARNED.md`](../docs/LESSONS_LEARNED.md) · [`CROSS-FEEDBACK.md`](../docs/CROSS-FEEDBACK.md)
 
 ---
 
@@ -19,44 +24,40 @@ A multi-tenant SaaS platform for pet-services SMBs (dog daycare, grooming, board
 
 **Status:** HTHD is deployed in pre-launch. The customer rows in the dev DB are Gingr-migrated test fixtures, NOT real users transacting. Treat HTHD as "deployed in pre-launch" — safe to test against live URLs.
 
-For the current state, always read the most recent `workspaces/platform/HANDOFF-*.md` in the platform repo. It rotates per-session.
+For the current state, always read the most recent `HANDOFF-*.md` in the platform repo. It rotates per-session.
 
 ---
 
 ## Repo layout (the platform repo, not this kit)
 
 ```
-ferroai/                                  ← repo root (International-AI-Design/ferroai)
-├── workspaces/
-│   └── platform/                         ← THE platform monorepo (your workspace)
-│       ├── apps/
-│       │   ├── customer-app/             ← Vite + React, customer-facing
-│       │   ├── admin-app/                ← Vite + React, tenant-staff-facing
-│       │   └── server/                   ← Node + Express + Prisma, single API
-│       ├── packages/                     ← Shared libraries (@ferro/*)
-│       ├── clients/                      ← Per-tenant config + branding
-│       ├── verticals/
-│       │   └── pet-services/
-│       │       └── prisma/schema.prisma  ← CANONICAL Prisma schema. Edit here.
-│       ├── e2e/                          ← Playwright end-to-end tests
-│       ├── scripts/                      ← Build + deploy scripts
-│       ├── CLAUDE.md                     ← Load-bearing technical state — READ FIRST
-│       ├── VERCEL_DEPLOY.md              ← Authoritative deploy runbook
-│       └── HANDOFF-*.md                  ← Time-stamped state snapshots, rotating
-└── outputs/                              ← Business deliverables
+animal-lovers-platform/                   ← repo root (the monorepo IS the root)
+├── apps/
+│   ├── customer-app/                     ← Vite + React, customer-facing
+│   ├── admin-app/                        ← Vite + React, tenant-staff-facing
+│   └── server/                           ← Node + Express + Prisma, single API
+├── packages/                             ← Shared libraries (@ferro/*)
+├── clients/                              ← Per-tenant config + branding
+├── verticals/
+│   └── pet-services/
+│       └── prisma/schema.prisma          ← CANONICAL Prisma schema. Edit HERE.
+├── e2e/                                  ← Playwright end-to-end tests
+├── scripts/                              ← Build + deploy scripts
+├── deploy/
+└── CLAUDE.md                             ← Load-bearing technical state — READ FIRST
 ```
 
-Other dirs you may see (`production/`, `internal/`, `archive/`) are **not your concern** unless Johnny points you there.
+> **Note:** `animal-lovers-platform` is the **contributor-scoped mirror** — code only. It's the repo you work in. There is no business, legal, or financial material in it, by design, and you should never need any.
 
 ---
 
 ## The five must-read files (in order)
 
-1. `workspaces/platform/CLAUDE.md` — load-bearing technical-state snapshot. Updated whenever a load-bearing fact changes.
-2. The most recent `workspaces/platform/HANDOFF-*.md` — session-time live state (find by `ls -t HANDOFF-*.md | head -1`).
-3. Any `workspaces/platform/docs/<session>/USER-STORIES-*.md` for the current sprint's stories with ACs.
-4. The matching `workspaces/platform/docs/<session>/SPRINT-PLAN-*.md` for daily milestones.
-5. `workspaces/platform/VERCEL_DEPLOY.md` — what to do (and not do) for deploys.
+1. `CLAUDE.md` — load-bearing technical-state snapshot. Updated whenever a load-bearing fact changes.
+2. The most recent `HANDOFF-*.md` — session-time live state (find by `ls -t HANDOFF-*.md | head -1`).
+3. Any `docs/<session>/USER-STORIES-*.md` for the current sprint's stories with ACs.
+4. The matching `docs/<session>/SPRINT-PLAN-*.md` for daily milestones.
+5. `VERCEL_DEPLOY.md` — what to do (and not do) for deploys.
 
 ---
 
@@ -64,7 +65,7 @@ Other dirs you may see (`production/`, `internal/`, `archive/`) are **not your c
 
 ```bash
 # 1. Pull latest
-cd workspaces/platform && git checkout main && git pull
+git checkout main && git pull
 
 # 2. See today's sprint board
 # The SessionStart hook in Claude Code auto-prints this
@@ -119,14 +120,14 @@ For these files: open a GitHub issue labeled `coordination`, describe the change
 
 ## Things you should NOT do
 
-Per `workspaces/platform/CLAUDE.md` and the team's hard-learned discipline:
+Per `CLAUDE.md` and the team's hard-learned discipline:
 
 - ❌ Touch `production/happy-tail/` in the platform repo. That's the legacy single-tenant deploy. The new platform's tenant config lives at `clients/<slug>/`.
 - ❌ Re-introduce per-app `pnpm-lock.yaml` files. The workspace-root lock is the only authoritative one.
 - ❌ Use `vercel --prod` directly. Use `pnpm deploy:customer-app:prod` / `pnpm deploy:admin-app:prod` (workspace-root scripts).
 - ❌ Link Vercel projects from the workspace root. The CLI link must live at `apps/<app>/.vercel/`.
 - ❌ Write `where: { tenantId }` against operational tables blindly. The Prisma extension auto-injects tenant scoping on most operational reads — you usually don't need to add it manually.
-- ❌ Touch prod Neon (DATABASE_URL pointing at prod). Only Johnny does that, with an explicit reason and a snapshot first.
+- ❌ Point `DATABASE_URL` at the production database. Only Johnny does that, with an explicit reason and a snapshot first.
 - ❌ Skip `pnpm prepare-schema` before reading `apps/server/prisma/schema.prisma`. That file is generated; it can lag if you haven't regenerated.
 - ❌ Patch a single tenant around platform gaps. If a tenant reveals a missing platform feature, file the platform feature, don't fork the platform.
 
@@ -134,7 +135,7 @@ Per `workspaces/platform/CLAUDE.md` and the team's hard-learned discipline:
 
 ## Three discipline rules to internalize
 
-1. **The tenant is the oracle, not the codebase.** When in doubt about intended behavior, compare against the legacy single-tenant deploy (`hthd.internationalaidesign.com` for HTHD) — not against the platform's current state.
+1. **The tenant is the oracle, not the codebase.** When in doubt about intended behavior, compare against the tenant’s legacy single-tenant deploy — not against the platform’s current state. Johnny will point you at the right one.
 2. **User-rooted ACs only.** Acceptance criteria must describe what the *user* experiences, not what the *code* does internally. "When the user taps Confirm, the booking shows as Confirmed within 2 seconds" — not "When `confirmBooking()` is called, `Booking.status` transitions to `confirmed`."
 3. **Behavioral verification > code inspection.** Playwright for UI claims. Integration tests for backend. Grep + diff for memory/docs. "Compiles + types pass" is not done.
 
@@ -186,7 +187,7 @@ cd e2e && pnpm test
 
 ## Where the sandbox is
 
-For destructive experiments, work on `dev` Neon database (DATABASE_URL = `dev_neon_url`) — NEVER prod. Johnny can hand you the dev URL on a private channel.
+For destructive experiments, use the **dev** database — NEVER production. Johnny will hand you the dev `DATABASE_URL` on a private channel.
 
 To reset the dev DB to a known state:
 ```bash
@@ -197,11 +198,11 @@ cd apps/server && pnpm db:seed
 
 ## Triggering Claude correctly
 
-Claude Code on your Mac will load `~/.claude/CLAUDE.md` (from this kit) + `workspaces/platform/CLAUDE.md` + the recent HANDOFF docs on session start. That gives it project context.
+Claude Code on your Mac will load `~/.claude/CLAUDE.md` (from this kit) + `CLAUDE.md` + the recent HANDOFF docs on session start. That gives it project context.
 
 For specific issues, the platform repo has a paste-ready prompt generator (when present):
 ```bash
-bash workspaces/platform/scripts/sprint-5day/start-on-issue.sh <N>
+bash scripts/sprint-5day/start-on-issue.sh <N>
 ```
 
 This produces a prompt that includes the user story, AC, and acceptance gate — feed it to Claude, then iterate.
@@ -222,9 +223,9 @@ This produces a prompt that includes the user story, AC, and acceptance gate —
 After install:
 1. **Read [`docs/SESSION-PLAYBOOK.md`](docs/SESSION-PLAYBOOK.md)** — the 4-phase session ritual. This is the single highest-leverage document in the kit. Read it once now; refer back at every close-out.
 2. **Skim [`docs/LESSONS_LEARNED.md`](docs/LESSONS_LEARNED.md)** — the 8 curated patterns will save you hours.
-3. Ask Johnny to add you as a collaborator on `International-AI-Design/ferroai`.
-4. Clone it: `gh repo clone International-AI-Design/ferroai ~/code/ferroai`
-5. `cd ~/code/ferroai/workspaces/platform && claude`
+3. Ask Johnny to add you as a collaborator on `International-AI-Design/animal-lovers-platform`.
+4. Clone it: `gh repo clone International-AI-Design/animal-lovers-platform ~/code/animal-lovers-platform`
+5. `cd ~/code/animal-lovers-platform && claude`
 6. Run Phase 1 of the SESSION-PLAYBOOK explicitly: read platform `CLAUDE.md` + most recent `HANDOFF-*.md`, pick an issue, write the user story + AC before code.
 7. Branch, work, open a PR. Tag Johnny for review.
 8. **At session end:** run Phase 4 close-out. Do not skip even on short sessions.

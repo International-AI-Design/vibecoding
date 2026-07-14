@@ -1,47 +1,36 @@
 {
-  "_comment_top": "VibeCoding contributor settings.json template — Animal Lovers App. Tune as needed; do NOT add API keys or other secrets here.",
-  "model": "claude-sonnet-4-6",
+  "_comment": "AI Design System — starter settings.json. Take what you want; own the rest. NEVER put API keys or secrets in this file.",
+
+  "_comment_model": "No model is pinned on purpose — pick yours with /model, so this file can't go stale. Pin one here only if you want it forced.",
+
+  "_comment_permissions": "This is the 'always do / ask first / never do' bucketing from THE-METHOD, Layer 3. Pre-allowing SPECIFIC safe commands is the right move; reaching for --dangerously-skip-permissions is not — that's turning the safety system off, which is not the same as configuring it.",
   "permissions": {
     "allow": [
-      "Bash(gh issue *)",
-      "Bash(gh pr *)",
-      "Bash(gh repo *)",
       "Bash(git status*)",
       "Bash(git log*)",
       "Bash(git diff*)",
-      "Bash(git checkout*)",
       "Bash(git branch*)",
+      "Bash(git checkout*)",
       "Bash(git pull*)",
-      "Bash(git push origin feature/*)",
-      "Bash(pnpm install*)",
-      "Bash(pnpm -r typecheck)",
-      "Bash(pnpm -r test*)",
-      "Bash(pnpm prepare-schema)",
-      "Bash(pnpm dev*)",
-      "Bash(pnpm build*)",
-      "Bash(npx prisma*)",
+      "Bash(gh issue *)",
+      "Bash(gh pr *)",
       "Bash(ls*)",
       "Bash(cat*)",
       "Bash(head*)",
       "Bash(tail*)",
       "Bash(grep*)",
-      "Bash(find * -type f *)",
-      "Bash(rg*)"
+      "Bash(rg*)",
+      "Bash(find * -type f *)"
     ],
+
+    "_comment_deny": "The 'never do' bucket. A sentence in CLAUDE.md is a REQUEST — the model can still ignore it. An entry here is a RULE, enforced at the tool layer. Anything genuinely destructive belongs here, not in prose.",
     "deny": [
-      "Bash(git push origin main*)",
       "Bash(git push --force*)",
-      "Bash(git reset --hard*)",
-      "Bash(vercel --prod*)",
-      "Bash(railway up*)",
-      "Bash(prisma migrate deploy*)"
+      "Bash(git push origin main*)",
+      "Bash(git reset --hard*)"
     ]
   },
-  "env": {
-    "_comment": "Set CONTRIBUTOR_NAME to your handle for logging; never put credentials here.",
-    "CONTRIBUTOR_NAME": "contributor"
-  },
-  "hooks": {
-    "_comment": "Add hooks as you settle into the workflow. The lead has session-start hooks that auto-print sprint state; you may want similar."
-  }
+
+  "_comment_hooks": "Hooks are where guardrails stop being suggestions. Start empty; add them as you learn which rules the model actually keeps violating. The usual first two: a PostToolUse auto-formatter, and a PreToolUse guard on paths that must never be written. See THE-METHOD, Layer 3, step 4.",
+  "hooks": {}
 }

@@ -1,151 +1,40 @@
-# VibeCoding
-**v0.2**
+# The AI Design System
 
-> A reproducible Claude Code setup for the IAID team — built around the way Johnny Fermin-Robbins ships software-on-demand for SMBs.
+**v0.3** · a reproducible Claude Code setup
 
-This repo is the **harness**, not the application. It gives a new contributor a productive Claude Code environment on their Mac in about 5 minutes. The actual platform code lives in a separate (private) repo; this kit gets your AI dev loop running, gives you the session playbook, and connects you back to the team's lessons-learned loop.
+> Most people using Claude Code are getting a fraction of what it can do — not because they're prompting badly, but because they're missing the machinery around the prompt.
+>
+> This is that machinery. It's the method [Johnny Fermin-Robbins](https://github.com/Fermin-Robbins) uses to ship production software as a solo operator, extracted into something you can install in five minutes and apply to your own work.
 
-**Priority order, in force:**
-1. **Quality** — every output verifiable by execution, not by inspection.
-2. **Token efficiency** — delegate to agents, search before reading, archive before context bloats.
-
-If you're new here, start with the bootstrap prompt below.
-
-## The 30-second mental model
-
-```
-   ┌───────────────────────────────────────────────────────────────┐
-   │  Your Mac                                                     │
-   │                                                               │
-   │   ~/.claude/        ◄── installed by install.sh               │
-   │     CLAUDE.md       (always-loaded base instructions)         │
-   │     MEMORY.md       (starter memory index)                    │
-   │     settings.json   (permissions + model)                     │
-   │                                                               │
-   │   ~/code/vibecoding/  ◄── this repo, cloned                   │
-   │     docs/SESSION-PLAYBOOK.md   (lazy-loaded; read at start)   │
-   │     docs/LESSONS_LEARNED.md    (lazy-loaded; curated wisdom)  │
-   │     docs/CROSS-FEEDBACK.md     (when you want to file)        │
-   │     scripts/file-feedback.sh   (one-command feedback)         │
-   │                                                               │
-   │   ~/code/ferroai/   ◄── private; the platform you work on    │
-   │                                                               │
-   └────────────────────────────┬──────────────────────────────────┘
-                                │  feedback issues
-                                ▼
-                  github.com/International-AI-Design/vibecoding
-                                │
-                                ▼
-                  Johnny curates → kit gets sharper → next session
-```
+**It is project-agnostic.** Nothing here assumes you're working on any particular codebase, in any particular language.
 
 ---
 
-## The bootstrap prompt
+## The idea, in 60 seconds
 
-Paste this into a fresh Claude Code session on your Mac. Claude does the rest.
+LLMs are **superhuman at what can be verified** and unreliable at everything else. That's not a prompting problem — it's a direct consequence of how they were trained.
 
-```text
-You're helping me get set up as a new contributor on the Animal Lovers App
-SaaS platform built by IAID (International AI Design).
+Which means the levers that work on people — motivation, urgency, telling it to try harder — do **nothing**. As Karpathy puts it, these are "ghosts," not animals: *"if you yell at them, they're not going to work better or worse."*
 
-This is a two-phase onboarding: (A) install + understand the kit, then
-(B) start work on a real issue. Confirm each step before moving on.
-If anything fails, explain why and ask me what to do.
+There is basically one lever that reliably changes output quality, and it's **how you've engineered verification.**
 
-=== PHASE A — INSTALL + ORIENT ===
+Three layers make that operational:
 
-1. Verify I have these installed on my Mac: node, pnpm, git, gh (GitHub CLI),
-   and `claude` (Claude Code CLI). If any are missing, give me the brew/npm
-   command to install them.
+| Layer | The question it answers |
+|---|---|
+| **1. Spec** | Does the model actually know what you want — precisely enough that ambiguity isn't silently resolved by a coin flip? |
+| **2. Verifier** | Can it check its own work against **reality**, before telling you it's done? |
+| **3. Environment** | Does your setup **compound** across sessions, or do you rebuild the workshop every morning? |
 
-2. Clone https://github.com/International-AI-Design/vibecoding to
-   ~/code/vibecoding (or `git pull` to refresh if already there).
+The claim that justifies the whole thing, from **Boris Cherny — the person who built Claude Code**:
 
-3. Run `bash ~/code/vibecoding/install.sh`. It backs up any existing
-   ~/.claude config files, then installs the contributor's CLAUDE.md,
-   MEMORY.md, and settings.json templates.
+> "Give Claude a way to verify its work. If Claude has that feedback loop, it will **2–3x the quality** of the final result."
 
-4. Verify the install by reading ~/.claude/CLAUDE.md and confirming it's
-   the IAID VibeCoding contributor kit (starts with
-   "# Animal Lovers App — Contributor CLAUDE.md").
-
-5. Read ~/code/vibecoding/docs/SESSION-PLAYBOOK.md and summarize for me:
-   - the 4 phases of a session
-   - the 3-and-10 rule for compaction avoidance
-   - the close-out ritual's 6 steps
-
-6. Read ~/code/vibecoding/docs/LESSONS_LEARNED.md and pick out the 3
-   patterns most likely to bite me on a first PR. Tell me what they are.
-
-7. Read ~/code/vibecoding/docs/CROSS-FEEDBACK.md. Confirm you know how
-   to file `feedback:correction` / `feedback:win` / `feedback:gap` issues
-   if we hit friction.
-
-=== PHASE B — START REAL WORK ===
-
-8. Ask me my GitHub handle so I can request access to the private platform
-   repo. If I don't have access yet, tell me to message Johnny
-   (@Fermin-Robbins) for an invite on International-AI-Design/ferroai.
-
-9. Once I have access:
-       gh repo clone International-AI-Design/ferroai
-       cd ~/code/ferroai/workspaces/platform
-       claude
-
-10. In the new Claude Code session, walk me through Phase 1 of the
-    SESSION-PLAYBOOK explicitly:
-    - read workspaces/platform/CLAUDE.md (first 80 lines is enough)
-    - read the most recent HANDOFF-*.md
-    - run `gh issue list --label status:ready --no-assignee` and help me
-      pick a `good-first-issue` / `area:customer-app` / `area:tests` issue
-
-11. Help me write the user story + acceptance criteria for the issue
-    BEFORE I write any code. Confirm with me before starting implementation.
-
-12. Then walk me through the work-rhythm cadence in SESSION-PLAYBOOK
-    Phase 2 as I implement.
-
-13. At the end, run the close-out ritual (SESSION-PLAYBOOK Phase 4) with me.
-
-Throughout: NEVER skip the verification steps. If install.sh fails, do not
-paper over it — show me the exact error. If the auto-mode safety classifier
-denies an action, escalate to Johnny — that's a feature, not a bug.
-```
+👉 **[Read THE METHOD →](docs/THE-METHOD.md)** — the one file to read if you read nothing else.
 
 ---
 
-## What this repo installs on your Mac
-
-`install.sh` is idempotent (safe to re-run) and only touches `~/.claude/`. It:
-
-1. Verifies prerequisites (`node`, `pnpm`, `git`, `gh`).
-2. Installs Claude Code CLI via brew if not present.
-3. Copies `claude-files/CLAUDE.md` → `~/.claude/CLAUDE.md` (backs up any existing one with a timestamp).
-4. Copies `claude-files/MEMORY.md` → `~/.claude/MEMORY.md` (same backup behavior).
-5. Copies `settings/settings.json` → `~/.claude/settings.json` (same backup behavior).
-6. Checks that `gh auth status` is OK; prompts you to run `gh auth login` if not.
-
-After running it, you're ready to clone the platform repo and start contributing.
-
----
-
-## What's deliberately NOT in this repo
-
-For your safety and to keep this kit shareable:
-
-- ❌ No private Claude memory feedback files (`feedback_*.md`). Those encode Johnny's personal corrections-history and aren't generalizable.
-- ❌ No Cabinet, Sentinel, Aliro, or other historical internal architecture content.
-- ❌ No real customer PII — placeholder names only. Get real contact info from Johnny on a 1:1 channel.
-- ❌ No credentials. Stripe, Resend, Neon, Railway, Anthropic API keys — none of those are in this repo. Get them from Johnny when you need them, and never commit them.
-- ❌ No Anthropic API key. Use your own Claude Code subscription via interactive auth (`claude auth login`). Johnny will share API access only if scope requires.
-- ❌ No `~/memory/personal/` content. That's Johnny's personal layer.
-
-If you find any of these in the repo by accident, flag it to Johnny immediately.
-
----
-
-## Manual install (if you'd rather skip the bootstrap prompt)
+## Install
 
 ```bash
 git clone https://github.com/International-AI-Design/vibecoding.git ~/code/vibecoding
@@ -153,66 +42,126 @@ cd ~/code/vibecoding
 bash install.sh
 ```
 
-Then read `CONTRIBUTOR_QUICKSTART.md` for the 10-minute orientation.
+**It's safe to run even if you already use Claude Code.** The installer will *never* silently overwrite an existing `CLAUDE.md`, `MEMORY.md`, or `settings.json` — if you have them, it leaves them alone and drops a `.suggested` copy next to each so you can diff and merge on your own terms. Re-running is safe. `--dry-run` shows you what it would do.
+
+### What lands where
+
+```
+~/.claude/
+├── CLAUDE.md          ← base harness — the forcing rules  (only if you don't have one)
+├── MEMORY.md          ← memory index                       (only if you don't have one)
+└── ads/
+    ├── THE-METHOD.md            ← ★ start here
+    ├── SESSION-PLAYBOOK.md      ← the session ritual
+    ├── DEVELOPMENT-PROTOCOL.md  ← stories → acceptance criteria → done
+    ├── MEMORY-ARCHITECTURE.md   ← how memory compounds
+    ├── LESSONS_LEARNED.md       ← patterns that cost real time to learn
+    └── templates/
+        ├── project-CLAUDE.md    ← drop into any repo
+        └── spec.md              ← the Layer-1 spec template
+```
+
+Nothing is auto-loaded except `CLAUDE.md` and `MEMORY.md`. The rest is read on demand — **that's the point.** Context you load "for completeness" is context you're not spending on the task.
 
 ---
 
-## What you do next (after install)
+## What's in it
 
-1. Ask Johnny (@Fermin-Robbins) to add you as a collaborator on `International-AI-Design/ferroai`. That's where the actual platform code lives.
-2. `gh repo clone International-AI-Design/ferroai ~/code/ferroai`
-3. `cd ~/code/ferroai/workspaces/platform && claude`
-4. The SessionStart hook prints today's sprint board.
-5. Pick an open issue, branch, work, open a PR.
+### [`THE-METHOD.md`](docs/THE-METHOD.md) — the core
+The three layers, with the primary sources traced. If you read one file, read this.
 
-Full daily workflow + branch protection rules + hot-files list + DoD gate are in [`CONTRIBUTOR_QUICKSTART.md`](CONTRIBUTOR_QUICKSTART.md).
+**The single most useful idea in here:** a rule in `CLAUDE.md` is a **request** — the model can ignore it. A **hook** is a **rule** — enforced mechanically, at the tool layer. Sentences are requests. Hooks are rules. Sort everything you care about into *always do* / *ask first* / **never do — and make that last bucket a hook.**
+
+### [`SESSION-PLAYBOOK.md`](docs/SESSION-PLAYBOOK.md) — the ritual
+Four phases: start, work, compaction-avoidance, close-out.
+
+Contains the **3-and-10 rule** (end the session at 3+ topics or 10+ files — context degrades through summarization, and it does so *invisibly*), and the **reasoning-failures check**, which is the habit that makes the whole system compound.
+
+### [`DEVELOPMENT-PROTOCOL.md`](docs/DEVELOPMENT-PROTOCOL.md) — the verifier, operationalized
+User stories → acceptance criteria → Definition of Done.
+
+The rule that matters most: **ACs describe what the *user* experiences, not what the code does.** Code-rooted ACs verify the implementation in isolation — and every real bug lives at the integration boundary the isolated test never crosses.
+
+### [`MEMORY-ARCHITECTURE.md`](docs/MEMORY-ARCHITECTURE.md) — how the environment compounds
+Layered memory, what earns always-loaded context (almost nothing), one-fact-per-file, and the failure mode to fear: **a system that launders its own hallucinations into facts by citing itself.**
+
+### [`LESSONS_LEARNED.md`](docs/LESSONS_LEARNED.md) — scar tissue
+Patterns that cost real time on real projects. Free to read, expensive to learn. Sample: *stubbed tests can't find stacked bugs* — a payment path was broken in **three** places, each only discoverable after fixing the one above it, and every unit test passed the whole time.
 
 ---
 
-## File map
+## Try it right now
 
-```
-vibecoding/
-├── README.md                       ← you are here (GitHub homepage)
-├── CONTRIBUTOR_QUICKSTART.md       ← 10-min orientation after install
-├── install.sh                      ← idempotent installer; only touches ~/.claude/
-├── claude-files/
-│   ├── CLAUDE.md                   ← contributor's ~/.claude/CLAUDE.md template
-│   └── MEMORY.md                   ← starter memory index
-├── settings/
-│   └── settings.json               ← permissions + model template
-├── docs/
-│   ├── SESSION-PLAYBOOK.md         ← THE ritual — read at first session start
-│   ├── LESSONS_LEARNED.md          ← curated wisdom from prior contributors
-│   └── CROSS-FEEDBACK.md           ← how to feed lessons back to the kit
-├── scripts/
-│   └── file-feedback.sh            ← one-command feedback filing
-└── .github/
-    └── ISSUE_TEMPLATE/             ← correction / win / gap / feature
+Don't start by building. Start by making it interview you:
+
+```text
+Before building anything: interview me to find the real goal behind this
+request (not just the task). Then draft a detailed spec — biased toward
+small, compartmentalized chunks with a clear checkpoint after each one.
+Flag every key decision explicitly and let me confirm it before you proceed.
 ```
 
-## Cross-feedback loop
+Then, once you're building, the other half:
 
-The kit gets better as contributors use it. If during a session you notice:
+```text
+Don't tell me something works until you've actually watched it work.
+```
 
-- A protocol that didn't work → file a `feedback:correction` issue
-- A pattern that worked unusually well → file a `feedback:win` issue
-- Context you needed that wasn't there → file a `feedback:gap` issue
+If those two prompts are all you ever take from this repo, it was worth cloning.
+
+---
+
+## The honest caveat
+
+More infrastructure is not more understanding, and building infrastructure *feels* like progress in a way that's genuinely seductive.
+
+> "You can outsource your thinking, but you can't outsource your understanding."
+> — Andrej Karpathy
+
+The three layers exist to get **your** understanding into a form the model can act on and be checked against. They are not a substitute for having a clear model of the goal yourself. If you install this and skip [`THE-METHOD.md`](docs/THE-METHOD.md), you have a folder of markdown and nothing else.
+
+**Start small.** One `CLAUDE.md` with a Corrections section you actually update. That single habit beats the entire rest of this repo. The architecture is what it grows into after months of real use — not what you build on day one.
+
+Let the leaks tell you where to put the pipes.
+
+---
+
+## Feedback loop
+
+The kit only gets good through use — *the best way to find a leak in a hose is to run water through it.*
+
+- A protocol that didn't work → `feedback:correction`
+- A pattern that worked unusually well → `feedback:win`
+- Context you needed that wasn't here → `feedback:gap`
 
 ```bash
 bash ~/code/vibecoding/scripts/file-feedback.sh
 ```
 
-Or [open an issue directly](https://github.com/International-AI-Design/vibecoding/issues/new/choose).
-
-Johnny curates issues weekly. Patterns get promoted into [`docs/LESSONS_LEARNED.md`](docs/LESSONS_LEARNED.md) or `claude-files/CLAUDE.md`. The next contributor inherits a sharper kit. Full protocol in [`docs/CROSS-FEEDBACK.md`](docs/CROSS-FEEDBACK.md).
+Or [open an issue](https://github.com/International-AI-Design/vibecoding/issues/new/choose). Patterns get promoted into [`LESSONS_LEARNED.md`](docs/LESSONS_LEARNED.md), and the next person inherits a sharper kit. Protocol: [`CROSS-FEEDBACK.md`](docs/CROSS-FEEDBACK.md).
 
 ---
 
-## Status + license
+## Tracks (opt-in)
 
-**Status:** v0.2 — adds the session playbook, lessons-learned log, and cross-feedback protocol that v0.1 was missing. Ready for first contributor end-to-end.
+Project-specific onboarding, for people working with Johnny directly. **Ignore these unless one is yours.**
 
-**License:** Not yet open-source licensed. This repo is published for the convenience of the IAID team and the developers Johnny works with directly. If you want to fork it or use the pattern, message Johnny first.
+- [`tracks/animal-lovers-app.md`](tracks/animal-lovers-app.md) — contributing to the Animal Lovers App platform
 
+---
+
+## Credit
+
+The method is a synthesis, and the primary sources are better than any summary:
+
+- **[Andrej Karpathy](https://karpathy.bearblog.dev/sequoia-ascent-2026/)** — the verifiability thesis, ["animals vs ghosts"](https://karpathy.bearblog.dev/animals-vs-ghosts/), spec design, the knowledge-base-as-moat idea
+- **[Boris Cherny](https://x.com/bcherny/status/2007179861115511237)** — Claude Code's creator at Anthropic. The verification-loop claim and most of the concrete environment tactics.
+- **[Anthropic — Claude Code best practices](https://www.anthropic.com/engineering/claude-code-best-practices)**
+
+Everything else is scar tissue from shipping.
+
+---
+
+**Status:** v0.3 — reframed from an ALA-contributor kit into a project-agnostic method kit. Non-destructive installer.
+**License:** not yet open-source licensed. Published for the people Johnny works with directly. Want to fork it? Just ask.
 **Maintainer:** Johnny Fermin-Robbins ([@Fermin-Robbins](https://github.com/Fermin-Robbins)) / IAID — Ferro Consulting LLC.

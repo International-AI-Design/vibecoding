@@ -1,7 +1,7 @@
 blank_issues_enabled: false
 contact_links:
   - name: Platform code bug (not the kit)
-    url: https://github.com/International-AI-Design/ferroai/issues/new
+    url: https://github.com/International-AI-Design/animal-lovers-platform/issues/new
     about: "Bugs in the Animal Lovers App platform itself — file there, not here."
   - name: Cross-feedback protocol
     url: https://github.com/International-AI-Design/vibecoding/blob/main/docs/CROSS-FEEDBACK.md

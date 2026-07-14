@@ -77,7 +77,7 @@ A great issue can be turned into a PR by Johnny (or you) in under 10 minutes.
 ## What's NOT cross-feedback
 
 Don't use this protocol for:
-- ❌ Platform code bugs — those go in `International-AI-Design/ferroai` issues
+- ❌ Platform code bugs — those go in `International-AI-Design/animal-lovers-platform` issues
 - ❌ Customer-facing bug reports — those go to Johnny on a 1:1 channel
 - ❌ Secrets, credentials, customer PII — never in any public issue
 - ❌ Personal complaints about the codebase — use a PR, not an issue

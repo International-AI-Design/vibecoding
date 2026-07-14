@@ -1,129 +1,183 @@
 #!/usr/bin/env bash
-# VibeCoding v0.2 — IAID contributor kit installer
-# Idempotent. Safe to re-run. Only touches ~/.claude/.
+# AI Design System — installer
+#
+# SAFE BY DEFAULT. This script will never silently replace an existing config.
 #
 # What it does:
-#   1. Verifies prerequisites (node, pnpm, git, gh, claude)
-#   2. Installs Claude Code CLI via brew if missing
-#   3. Installs ~/.claude/CLAUDE.md (with timestamped backup)
-#   4. Installs ~/.claude/MEMORY.md (with timestamped backup)
-#   5. Installs ~/.claude/settings.json (with timestamped backup)
-#   6. Verifies gh auth
-#   7. Prints next steps
+#   1. Installs the method docs + templates to ~/.claude/ads/   (always safe — own namespace)
+#   2. Installs ~/.claude/CLAUDE.md and ~/.claude/MEMORY.md ONLY if they don't exist.
+#      If they DO exist, it writes a .suggested file next to them and tells you.
+#   3. Never touches ~/.claude/settings.json. Prints guidance instead.
+#
+# Re-running is safe. Docs are refreshed; your configs are never clobbered.
+#
+# Flags:
+#   --force    Overwrite existing CLAUDE.md / MEMORY.md (timestamped backup first)
+#   --dry-run  Show what would happen, change nothing
 
 set -euo pipefail
 
 KIT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-CLAUDE_DIR="$HOME/.claude"
+CLAUDE_DIR="${CLAUDE_CONFIG_DIR:-$HOME/.claude}"
+ADS_DIR="$CLAUDE_DIR/ads"
 
-YELLOW='\033[1;33m'
-GREEN='\033[0;32m'
-RED='\033[0;31m'
-NC='\033[0m'
+FORCE=0
+DRY_RUN=0
+for arg in "$@"; do
+  case "$arg" in
+    --force)   FORCE=1 ;;
+    --dry-run) DRY_RUN=1 ;;
+    -h|--help) sed -n '2,20p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
+    *) echo "Unknown flag: $arg (try --help)" >&2; exit 1 ;;
+  esac
+done
 
-say() { echo -e "${GREEN}[vibecoding]${NC} $1"; }
-warn() { echo -e "${YELLOW}[vibecoding]${NC} $1"; }
-err() { echo -e "${RED}[vibecoding]${NC} $1"; }
+BOLD='\033[1m'; GREEN='\033[0;32m'; YELLOW='\033[1;33m'; RED='\033[0;31m'; DIM='\033[2m'; NC='\033[0m'
+say()  { echo -e "${GREEN}[ads]${NC} $1"; }
+warn() { echo -e "${YELLOW}[ads]${NC} $1"; }
+err()  { echo -e "${RED}[ads]${NC} $1"; }
+skip() { echo -e "${DIM}[ads] $1${NC}"; }
 
-say "IAID VibeCoding contributor kit — installing"
-say "Kit dir: $KIT_DIR"
-say "Target ~/.claude: $CLAUDE_DIR"
+echo ""
+echo -e "${BOLD}AI Design System${NC} — installing"
+echo -e "${DIM}kit:    $KIT_DIR${NC}"
+echo -e "${DIM}target: $CLAUDE_DIR${NC}"
+[ "$DRY_RUN" -eq 1 ] && warn "DRY RUN — nothing will be written"
 echo ""
 
-# ─── Prereq checks ─────────────────────────────────────────────────
-check_cmd() {
-  if command -v "$1" >/dev/null 2>&1; then
-    say "✓ $1 found ($(which "$1"))"
+# ─── Prerequisites ────────────────────────────────────────────────
+# Only `claude` is genuinely required. git/gh are strongly recommended but the
+# method works without them — don't hard-fail someone out of the method
+# because they haven't installed the GitHub CLI.
+
+MISSING_REQUIRED=0
+
+if command -v claude >/dev/null 2>&1; then
+  say "✓ claude  $(command -v claude)"
+else
+  err "✗ claude — Claude Code CLI not found. This kit is for Claude Code."
+  err "  Install: https://docs.claude.com/claude-code"
+  MISSING_REQUIRED=1
+fi
+
+for cmd in git gh; do
+  if command -v "$cmd" >/dev/null 2>&1; then
+    say "✓ $cmd  $(command -v "$cmd")"
   else
-    warn "✗ $1 NOT found"
-    if [ -n "${2:-}" ]; then
-      warn "  Install with: $2"
-    fi
-    return 1
+    warn "○ $cmd not found (recommended, not required) — brew install $cmd"
   fi
-}
+done
 
-say "Checking prerequisites…"
-MISSING=0
-check_cmd node "brew install node" || MISSING=1
-check_cmd pnpm "npm i -g pnpm" || MISSING=1
-check_cmd git "brew install git" || MISSING=1
-check_cmd gh "brew install gh" || MISSING=1
-echo ""
-
-if [ "$MISSING" -ne 0 ]; then
-  err "One or more prerequisites are missing. Install them and re-run."
+if [ "$MISSING_REQUIRED" -ne 0 ]; then
+  echo ""
+  err "Install Claude Code, then re-run."
   exit 1
 fi
+echo ""
 
-# ─── Claude Code CLI ──────────────────────────────────────────────
-if ! command -v claude >/dev/null 2>&1; then
-  say "Installing Claude Code CLI via brew…"
-  if command -v brew >/dev/null 2>&1; then
-    brew install claude 2>&1 | tail -3 || true
-  fi
-  if ! command -v claude >/dev/null 2>&1; then
-    warn "Claude Code CLI not installed automatically. Install manually:"
-    warn "  https://docs.claude.com/claude-code"
-  fi
-else
-  say "✓ Claude Code CLI already installed ($(which claude))"
-fi
+# ─── Helpers ──────────────────────────────────────────────────────
 
-# ─── ~/.claude dir ────────────────────────────────────────────────
-if [ ! -d "$CLAUDE_DIR" ]; then
-  say "Creating $CLAUDE_DIR…"
-  mkdir -p "$CLAUDE_DIR"
-fi
+run() { [ "$DRY_RUN" -eq 1 ] && echo -e "${DIM}    would run: $*${NC}" || "$@"; }
 
-# ─── Helper: install file with timestamped backup ─────────────────
-install_file() {
-  local src="$1"
-  local dest="$2"
-  local label="$3"
+# Install a file only if the destination doesn't exist.
+# If it exists: leave it alone, drop a .suggested alongside, and report.
+install_safe() {
+  local src="$1" dest="$2" label="$3"
 
   if [ ! -f "$src" ]; then
-    warn "Missing source $src — skipping $label"
+    warn "missing source: $src — skipping $label"
     return
   fi
 
-  if [ -f "$dest" ]; then
-    local ts
-    ts="$(date +%Y%m%d-%H%M%S)"
-    local backup="${dest}.backup-${ts}"
-    warn "Existing $dest — backing up to $backup"
-    cp "$dest" "$backup"
+  if [ ! -f "$dest" ]; then
+    run cp "$src" "$dest"
+    say "✓ installed $dest ${DIM}($label)${NC}"
+    return
   fi
 
-  cp "$src" "$dest"
-  say "✓ Installed $dest ($label)"
+  if [ "$FORCE" -eq 1 ]; then
+    local backup="${dest}.backup-$(date +%Y%m%d-%H%M%S)"
+    run cp "$dest" "$backup"
+    run cp "$src" "$dest"
+    warn "↻ replaced $dest ${DIM}(backup: $(basename "$backup"))${NC}"
+    return
+  fi
+
+  # The safe path: don't touch it.
+  run cp "$src" "${dest}.suggested"
+  warn "⊙ $dest already exists — NOT modified."
+  echo -e "     ${DIM}Our version is at ${dest}.suggested${NC}"
+  echo -e "     ${DIM}Compare: diff ${dest} ${dest}.suggested${NC}"
+  PREEXISTING+=("$dest")
 }
 
-install_file "$KIT_DIR/claude-files/CLAUDE.md" "$CLAUDE_DIR/CLAUDE.md" "contributor CLAUDE.md"
-install_file "$KIT_DIR/claude-files/MEMORY.md" "$CLAUDE_DIR/MEMORY.md" "starter memory index"
-install_file "$KIT_DIR/settings/settings.json" "$CLAUDE_DIR/settings.json" "permissions + model template"
+PREEXISTING=()
 
-# ─── GitHub auth check ────────────────────────────────────────────
+# ─── 1. Method docs + templates (own namespace — always safe) ──────
+
+run mkdir -p "$ADS_DIR" "$ADS_DIR/templates"
+
+for f in THE-METHOD SESSION-PLAYBOOK DEVELOPMENT-PROTOCOL MEMORY-ARCHITECTURE LESSONS_LEARNED CROSS-FEEDBACK; do
+  if [ -f "$KIT_DIR/docs/$f.md" ]; then
+    run cp "$KIT_DIR/docs/$f.md" "$ADS_DIR/$f.md"
+  fi
+done
+say "✓ method docs → $ADS_DIR/"
+
+run cp "$KIT_DIR/templates/project-CLAUDE.md" "$ADS_DIR/templates/project-CLAUDE.md"
+run cp "$KIT_DIR/templates/spec.md"           "$ADS_DIR/templates/spec.md"
+say "✓ templates   → $ADS_DIR/templates/"
 echo ""
-if gh auth status >/dev/null 2>&1; then
-  say "✓ GitHub CLI authenticated as $(gh api user --jq .login 2>/dev/null || echo 'unknown')"
+
+# ─── 2. Base config (never silently clobbered) ────────────────────
+
+install_safe "$KIT_DIR/claude-files/CLAUDE.md" "$CLAUDE_DIR/CLAUDE.md" "base harness"
+install_safe "$KIT_DIR/claude-files/MEMORY.md" "$CLAUDE_DIR/MEMORY.md" "memory index"
+echo ""
+
+# ─── 3. settings.json — never auto-written ────────────────────────
+# Permissions are personal and security-relevant. Overwriting someone's
+# settings.json could silently widen what runs without confirmation.
+
+if [ -f "$CLAUDE_DIR/settings.json" ]; then
+  skip "○ settings.json exists — left alone (permissions are yours to own)."
+  run cp "$KIT_DIR/settings/settings.json" "$ADS_DIR/settings.example.json"
+  echo -e "     ${DIM}Reference copy: $ADS_DIR/settings.example.json${NC}"
 else
-  warn "GitHub CLI not authenticated. Run: gh auth login"
+  run cp "$KIT_DIR/settings/settings.json" "$CLAUDE_DIR/settings.json"
+  say "✓ installed $CLAUDE_DIR/settings.json"
 fi
+echo ""
 
 # ─── Done ─────────────────────────────────────────────────────────
+
+echo -e "${BOLD}Install complete.${NC}"
 echo ""
-say "Install complete."
+
+if [ ${#PREEXISTING[@]} -gt 0 ]; then
+  warn "You already had these — we did NOT overwrite them:"
+  for f in "${PREEXISTING[@]}"; do echo "     • $f"; done
+  echo ""
+  echo "  Merge what you want from the .suggested files, or re-run with --force"
+  echo "  to replace them (a timestamped backup is made first)."
+  echo ""
+fi
+
+echo "Next:"
 echo ""
-echo "Next steps (in order, do not skip):"
-echo "  1. Read $KIT_DIR/docs/SESSION-PLAYBOOK.md  ← THE RITUAL"
-echo "  2. Skim $KIT_DIR/docs/LESSONS_LEARNED.md   ← 8 curated patterns"
-echo "  3. Skim $KIT_DIR/docs/CROSS-FEEDBACK.md    ← how to feed back"
-echo "  4. Read $KIT_DIR/CONTRIBUTOR_QUICKSTART.md ← project overview"
-echo "  5. Ask Johnny (@Fermin-Robbins) to add you as a collaborator on"
-echo "     International-AI-Design/ferroai (the actual platform repo)"
-echo "  6. Once added:"
-echo "       gh repo clone International-AI-Design/ferroai"
-echo "       cd ferroai/workspaces/platform && claude"
+echo -e "  ${BOLD}1.${NC} Read the method — it's the whole point:"
+echo "       $ADS_DIR/THE-METHOD.md"
 echo ""
-say "Welcome to VibeCoding v0.2 🐾"
+echo -e "  ${BOLD}2.${NC} Then the session ritual:"
+echo "       $ADS_DIR/SESSION-PLAYBOOK.md"
+echo ""
+echo -e "  ${BOLD}3.${NC} Starting a project? Copy the template into it:"
+echo "       cp $ADS_DIR/templates/project-CLAUDE.md <your-repo>/CLAUDE.md"
+echo ""
+echo -e "  ${BOLD}4.${NC} Open Claude Code in a real project and try the spec prompt"
+echo "     from THE-METHOD Layer 1. Don't start by building — start by"
+echo "     making it interview you."
+echo ""
+echo -e "${DIM}The kit only gets good through use. When something here is wrong,${NC}"
+echo -e "${DIM}file it: bash $KIT_DIR/scripts/file-feedback.sh${NC}"
+echo ""
